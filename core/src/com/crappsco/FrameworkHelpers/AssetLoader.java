@@ -17,18 +17,15 @@ public class AssetLoader {
     public static void load() {
 
 
-        //DECLARE SPRITESHEET HERE ONCE YOU GET IT WORKING.
         bg = new Texture("background.png");
         redcircle = new Texture("redcircle.png");
         bluecircle = new Texture("bluecircle.png");
 
-        //DECLARE ANIMATION HERE TOO AND CALL THE ANIMATION THE SAME WAY IN GAME RENDERER
 
     }
 
     public static void dispose() {
 
-        //YOU CAN DELETE THESE AND JUST DISPOSE THE SINGLE SPRITESHEET ONCE U GET IT WORKING.
         bg.dispose();
         redcircle.dispose();
         bluecircle.dispose();
