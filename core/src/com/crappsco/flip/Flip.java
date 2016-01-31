@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.crappsco.FrameworkHelpers.AssetLoader;
+import com.crappsco.screens.LoadingScreen;
 import com.crappsco.screens.MainMenu;
 
 public class Flip extends Game {
@@ -11,14 +12,15 @@ public class Flip extends Game {
     public SpriteBatch batcher;
     public BitmapFont font;
 
+
     @Override
     public void create() {
+        AssetLoader.load();
+
         //Set SpriteBatch and font here
         batcher = new SpriteBatch();
-        font = new BitmapFont();
-
+        font = AssetLoader.font;
         //Load in Assets
-        AssetLoader.load();
 
         //Set Screen
         setScreen(new MainMenu(this));
@@ -27,5 +29,6 @@ public class Flip extends Game {
     public void dispose() {
         super.dispose();
         AssetLoader.dispose();
+        font.dispose();
     }
 }

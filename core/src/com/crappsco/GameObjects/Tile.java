@@ -7,15 +7,17 @@ import com.badlogic.gdx.math.Circle;
  * Created by C on 2016-01-16.
  */
 public class Tile {
-    public static final float radius = 50;
+    public static final float radius = 45;
     public float x, y;
     public int face;
+    public boolean flippable;
     public Circle circle;
 
-    public Tile(float xloc, float yloc, int type) {
+    public Tile(float xloc, float yloc, int face, boolean flippable) {
         x = xloc;
         y = yloc;
-        face = type;
+        this.face = face;
+        this.flippable = flippable;
         circle = new Circle(x + radius, y + radius, radius);
     }
 
@@ -28,12 +30,17 @@ public class Tile {
         }
     }
 
-    public Tile flipTile(float xLoc, float yLoc, float face) {
+    public Tile flipTile(float xLoc, float yLoc, int face, boolean flippable) {
         Tile flippedTile;
-        if (face == 0) {
-            flippedTile = new Tile(xLoc, yLoc, 1);
-        } else {
-            flippedTile = new Tile(xLoc, yLoc, 0);
+        if(flippable) {
+            if (face == 0) {
+                flippedTile = new Tile(xLoc, yLoc, 1, flippable);
+            } else {
+                flippedTile = new Tile(xLoc, yLoc, 0, flippable);
+            }
+        }
+        else{
+            flippedTile = new Tile(xLoc, yLoc, face, flippable);
         }
         return flippedTile;
     }
@@ -50,4 +57,7 @@ public class Tile {
         return y;
     }
 
+    public boolean getFlippable(){
+        return flippable;
+    }
 }

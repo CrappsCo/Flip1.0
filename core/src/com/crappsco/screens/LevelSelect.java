@@ -14,20 +14,21 @@ import com.crappsco.flip.Flip;
  * Created by Ray on 2016-01-26.
  */
 public class LevelSelect implements Screen {
-    public Viewport viewport;
-    public OrthographicCamera camera;
-    public final float WIDTH = 1080;
-    public final float HEIGHT = 1920;
+    final Flip game;
+    public static final float WIDTH = 1080;
+    public static final float HEIGHT = 1920;
+    public static final float tileSpacing = 145;
 
     private float runTime = 0;
 
     public Vector3 touchPoint;
-
+    public Viewport viewport;
+    public OrthographicCamera camera;
+    public static Tile[][] currentGrid;
     public static Tile[][] currentLevel;
-    public static int rowNum, colNum;
+    public static int rowNum, colNum, moves;
 
 
-    final Flip game;
 
     public LevelSelect(Flip game) {
 
@@ -45,9 +46,73 @@ public class LevelSelect implements Screen {
         game.batcher.setProjectionMatrix(camera.combined);
     }
 
-    @Override
-    public void show() {
+    // LEVEL CREATION FUNCTIONS
 
+    public static Tile[][] createGrid(int[][] faces){
+        Tile[][] level = new Tile[rowNum][colNum];
+        int [][] face = faces;
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                level[i][j] = new Tile(tileSpacing * i  + (45f + WIDTH - (tileSpacing * colNum))/2, tileSpacing * j + (HEIGHT - 100f - (tileSpacing * rowNum)), face[i][j], false);
+            }
+        }
+        return level;
+    }
+
+
+    public static Tile[][] createLevel(int[][] faces){
+        Tile[][] level = new Tile[rowNum][colNum];
+        int [][] face = faces;
+        for (int i = 0; i < rowNum; i++) {
+            for (int j = 0; j < colNum; j++) {
+                level[i][j] = new Tile(tileSpacing * i + (45f + WIDTH - (tileSpacing * colNum))/2, tileSpacing * j + tileSpacing, face[i][j], true);
+            }
+        }
+        return level;
+    }
+
+    //LEVEL FUNCTIONS
+
+    public void Level1() {
+        rowNum = 5;
+        colNum = 5;
+        moves = 5;
+        int[][] winningGrid = new int[][]{
+                { 1, 1, 1, 1, 1},  // this is column 1 NOT row 1
+                { 1, 0, 0, 0, 1},
+                { 0, 1, 0, 1, 0},
+                { 1, 0, 0, 0, 1},
+                { 1, 1, 1, 1, 1}
+        };
+        int[][] playerGrid = new int[][]{
+                { 0, 0, 0, 0, 0},  // this is column 1 NOT row 1
+                { 0, 0, 0, 0, 0},
+                { 0, 0, 0, 0, 0},
+                { 0, 0, 0, 0, 0},
+                { 0, 0, 0, 0, 0}
+        };
+        currentGrid = createGrid(winningGrid);
+        currentLevel = createLevel(playerGrid);
+    }
+
+    public void Level2() {
+        rowNum = 4;
+        colNum = 4;
+        moves = 5;
+        int[][] winningGrid = new int[][]{
+                { 1, 0, 0, 1},  // this is column 1 NOT row 1
+                { 0, 0, 0, 0},
+                { 0, 0, 0, 0},
+                { 1, 0, 0, 1}
+        };
+        int[][] playerGrid = new int[][]{
+                { 0, 0, 0, 0},  // this is column 1 NOT row 1
+                { 0, 0, 0, 0},
+                { 0, 0, 0, 0},
+                { 0, 0, 0, 0}
+        };
+        currentGrid = createGrid(winningGrid);
+        currentLevel = createLevel(playerGrid);
     }
 
     @Override
@@ -58,7 +123,7 @@ public class LevelSelect implements Screen {
         //Set current level
         if (Gdx.input.justTouched()) {
             touchPoint = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            currentLevel = Level1();
+            Level2();
             game.setScreen(new GamePanel(game));
             dispose();
         }
@@ -81,6 +146,10 @@ public class LevelSelect implements Screen {
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
     }
 
+    @Override
+    public void show() {
+
+    }
 
     @Override
     public void pause() {
@@ -100,19 +169,5 @@ public class LevelSelect implements Screen {
     @Override
     public void dispose() {
 
-    }
-
-    //LEVEL FUNCTIONS
-
-    public static Tile[][] Level1() {
-        rowNum = 5;
-        colNum = 5;
-        Tile[][] level1 = new Tile[rowNum][colNum];
-        for (int i = 0; i < rowNum; i++) {
-            for (int j = 0; j < colNum; j++) {
-                level1[i][j] = new Tile(120f * i + 240f, 120f * j + 100f, 0);
-            }
-        }
-        return level1;
     }
 }

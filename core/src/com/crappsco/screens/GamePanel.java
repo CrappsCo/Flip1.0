@@ -16,27 +16,26 @@ import com.crappsco.flip.Flip;
  * Created by Ray on 2016-01-20.
  */
 public class GamePanel implements Screen {
-
-    public Viewport viewport;
-    public OrthographicCamera camera;
+    final Flip game;
     public final float WIDTH = 1080;
     public final float HEIGHT = 1920;
-
     private float runTime = 0;
-
     public Vector3 touchPoint;
-
+    public Viewport viewport;
+    public OrthographicCamera camera;
+    public Tile[][] currentGrid;
     public Tile[][] currentLevel;
+    public int moves;
 
-
-    final Flip game;
 
     public GamePanel(Flip game) {
 
         this.game = game;
 
         //Set level
+        currentGrid = LevelSelect.currentGrid;
         currentLevel = LevelSelect.currentLevel;
+        moves = LevelSelect.moves;
 
         //Set Camera
         float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
@@ -51,9 +50,44 @@ public class GamePanel implements Screen {
 
     }
 
-    @Override
-    public void show() {
+    //FLIP FUNCTIONS
+    // 1 2 3
+    // 4 5 6
+    // 7 8 9
 
+    public void flipSquare(int i, int j) {
+        if (i - 1 >=0 && j + 1 < LevelSelect.colNum)
+            currentLevel[i - 1][j + 1] = currentLevel[i - 1][j + 1].flipTile(currentLevel[i - 1][j + 1].getX(), currentLevel[i - 1][j + 1].getY(), currentLevel[i - 1][j + 1].getFace(), currentLevel[i - 1][j + 1].getFlippable()); // 1
+        if (i + 1 < LevelSelect.rowNum && j + 1 < LevelSelect.colNum)
+            currentLevel[i + 1][j + 1] = currentLevel[i + 1][j + 1].flipTile(currentLevel[i + 1][j + 1].getX(), currentLevel[i + 1][j + 1].getY(), currentLevel[i + 1][j + 1].getFace(), currentLevel[i + 1][j + 1].getFlippable()); // 3
+        if (i - 1 >= 0 && j - 1 >= 0)
+            currentLevel[i - 1][j - 1] = currentLevel[i - 1][j - 1].flipTile(currentLevel[i - 1][j - 1].getX(), currentLevel[i - 1][j - 1].getY(), currentLevel[i - 1][j - 1].getFace(), currentLevel[i - 1][j - 1].getFlippable()); // 7
+        if (i + 1 < LevelSelect.rowNum && j - 1 >= 0)
+            currentLevel[i + 1][j - 1] = currentLevel[i + 1][j - 1].flipTile(currentLevel[i + 1][j - 1].getX(), currentLevel[i + 1][j - 1].getY(), currentLevel[i + 1][j - 1].getFace(), currentLevel[i + 1][j - 1].getFlippable()); // 9
+
+        if (j + 1 < LevelSelect.colNum)
+            currentLevel[i][j + 1] = currentLevel[i][j + 1].flipTile(currentLevel[i][j + 1].getX(), currentLevel[i][j + 1].getY(), currentLevel[i][j + 1].getFace(), currentLevel[i][j + 1].getFlippable()); // 2
+        if (i - 1 >= 0)
+            currentLevel[i - 1][j] = currentLevel[i - 1][j].flipTile(currentLevel[i - 1][j].getX(), currentLevel[i - 1][j].getY(), currentLevel[i - 1][j].getFace(), currentLevel[i - 1][j].getFlippable()); // 4
+        if (i + 1 < LevelSelect.rowNum)
+            currentLevel[i + 1][j] = currentLevel[i + 1][j].flipTile(currentLevel[i + 1][j].getX(), currentLevel[i + 1][j].getY(), currentLevel[i + 1][j].getFace(), currentLevel[i + 1][j].getFlippable()); // 6
+        if (j - 1 >= 0)
+            currentLevel[i][j - 1] = currentLevel[i][j - 1].flipTile(currentLevel[i][j - 1].getX(), currentLevel[i][j - 1].getY(), currentLevel[i][j - 1].getFace(), currentLevel[i][j - 1].getFlippable()); // 8
+
+        currentLevel[i][j] = currentLevel[i][j].flipTile(currentLevel[i][j].getX(), currentLevel[i][j].getY(), currentLevel[i][j].getFace(), currentLevel[i][j].getFlippable()); // 5
+    }
+
+    public void flipCross(int i, int j) {
+        if (j + 1 < LevelSelect.colNum)
+            currentLevel[i][j + 1] = currentLevel[i][j + 1].flipTile(currentLevel[i][j + 1].getX(), currentLevel[i][j + 1].getY(), currentLevel[i][j + 1].getFace(), currentLevel[i][j + 1].getFlippable()); // 2
+        if (i - 1 >= 0)
+            currentLevel[i - 1][j] = currentLevel[i - 1][j].flipTile(currentLevel[i - 1][j].getX(), currentLevel[i - 1][j].getY(), currentLevel[i - 1][j].getFace(), currentLevel[i - 1][j].getFlippable()); // 4
+        if (i + 1 < LevelSelect.rowNum)
+            currentLevel[i + 1][j] = currentLevel[i + 1][j].flipTile(currentLevel[i + 1][j].getX(), currentLevel[i + 1][j].getY(), currentLevel[i + 1][j].getFace(), currentLevel[i + 1][j].getFlippable()); // 6
+        if (j - 1 >= 0)
+            currentLevel[i][j - 1] = currentLevel[i][j - 1].flipTile(currentLevel[i][j - 1].getX(), currentLevel[i][j - 1].getY(), currentLevel[i][j - 1].getFace(), currentLevel[i][j - 1].getFlippable()); // 8
+
+        currentLevel[i][j] = currentLevel[i][j].flipTile(currentLevel[i][j].getX(), currentLevel[i][j].getY(), currentLevel[i][j].getFace(), currentLevel[i][j].getFlippable()); // 5
     }
 
     @Override
@@ -67,7 +101,7 @@ public class GamePanel implements Screen {
                 for (int j = 0; j < LevelSelect.colNum; j++) {
                     Tile tile = currentLevel[i][j];
                     if (tile.contains(touchPoint.x, touchPoint.y)) {
-                        flipCross(i, j);
+                        flipSquare(i, j);
                     }
                 }
             }
@@ -80,20 +114,36 @@ public class GamePanel implements Screen {
 
         game.batcher.begin();
 
+
+
         //Drawing Background
         game.batcher.draw(AssetLoader.bg, 0, 0);
+
+        //Drawing the top Grid
+        for (int i = 0; i < LevelSelect.rowNum; i++) {
+            for (int j = 0; j < LevelSelect.colNum; j++) {
+                Tile tile = currentGrid[i][j];
+                if (tile.face == 0) {
+                    game.batcher.draw(AssetLoader.faceup, tile.getX(), tile.getY());
+                } else {
+                    game.batcher.draw(AssetLoader.facedown, tile.getX(), tile.getY());
+                }
+            }
+        }
 
         //Drawing the tiles
         for (int i = 0; i < LevelSelect.rowNum; i++) {
             for (int j = 0; j < LevelSelect.colNum; j++) {
                 Tile tile = currentLevel[i][j];
                 if (tile.face == 0) {
-                    game.batcher.draw(AssetLoader.bluecircle, tile.getX(), tile.getY());
+                    game.batcher.draw(AssetLoader.faceup, tile.getX(), tile.getY());
                 } else {
-                    game.batcher.draw(AssetLoader.redcircle, tile.getX(), tile.getY());
+                    game.batcher.draw(AssetLoader.facedown, tile.getX(), tile.getY());
                 }
             }
         }
+
+
         game.batcher.end();
 
     }
@@ -104,6 +154,10 @@ public class GamePanel implements Screen {
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
     }
 
+    @Override
+    public void show() {
+
+    }
 
     @Override
     public void pause() {
@@ -126,17 +180,5 @@ public class GamePanel implements Screen {
     }
 
 
-    //FLIP FUNCTIONS
 
-    public void flipCross(int i, int j) {
-        if (i + 1 < LevelSelect.rowNum)
-            currentLevel[i + 1][j] = currentLevel[i + 1][j].flipTile(currentLevel[i + 1][j].getX(), currentLevel[i + 1][j].getY(), currentLevel[i + 1][j].getFace());
-        if (i - 1 >= 0)
-            currentLevel[i - 1][j] = currentLevel[i - 1][j].flipTile(currentLevel[i - 1][j].getX(), currentLevel[i - 1][j].getY(), currentLevel[i - 1][j].getFace());
-        if (j + 1 < LevelSelect.colNum)
-            currentLevel[i][j + 1] = currentLevel[i][j + 1].flipTile(currentLevel[i][j + 1].getX(), currentLevel[i][j + 1].getY(), currentLevel[i][j + 1].getFace());
-        if (j - 1 >= 0)
-            currentLevel[i][j - 1] = currentLevel[i][j - 1].flipTile(currentLevel[i][j - 1].getX(), currentLevel[i][j - 1].getY(), currentLevel[i][j - 1].getFace());
-        currentLevel[i][j] = currentLevel[i][j].flipTile(currentLevel[i][j].getX(), currentLevel[i][j].getY(), currentLevel[i][j].getFace());
-    }
 }
