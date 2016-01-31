@@ -33,7 +33,8 @@ public class MainMenu implements Screen {
 
     private Sprite playButton, settings;
     private Circle playCircle, settingsCircle;
-
+    private final int animatePlay = 0;
+    private final int animateSettings = 1;
     private float runTime = 0;
 
     public Vector3 touchPoint;
@@ -72,15 +73,15 @@ public class MainMenu implements Screen {
         //Setting up settings
         settings = new Sprite(AssetLoader.settings);
         settings.setColor(1, 1, 1, 0);
-        settings.setPosition((WIDTH / 2) - (playButton.getWidth() / 2), (HEIGHT / 2) - playButton.getHeight()*2);
-        settingsCircle = new Circle((WIDTH / 2), (HEIGHT / 2) - 282, 141);
+        settings.setPosition((WIDTH / 2) - (playButton.getWidth() / 2), (HEIGHT / 2) - playButton.getHeight() * 2);
+        settingsCircle = new Circle((WIDTH / 2), (HEIGHT / 2) - 282 - 141, 141);
 
     }
 
     public void tweenSetup() {
 
         Tween.setCombinedAttributesLimit(5);
-//Spinning fade animation
+        //Spinning fade animation
         Timeline.createSequence()
                 .delay(.75f)
                 .beginParallel()
@@ -101,39 +102,43 @@ public class MainMenu implements Screen {
 
     }
 
-    public void tweenTouch() {
+    public void tweenTouch(int animate) {
         //Diagonal Flip animation
 
-        TweenCallback cb = new TweenCallback() {
-            @Override
-            public void onEvent(int type, BaseTween<?> source) {
-                game.setScreen(new LevelSelect(game));
-                dispose();
-            }
-        };
-        Timeline.createSequence()
-                .beginParallel()
-                .push(Tween.to(playButton, SpriteAccessor.ROTATION, 0.75f).target(540))
-                .push(Tween.to(playButton, SpriteAccessor.SCALEXY, 0.75f).target(1, 0))
-                .end()
-                .beginParallel()
-                .push(Tween.to(playButton, SpriteAccessor.ROTATION, 0.75f).target(720))
-                .push(Tween.to(playButton, SpriteAccessor.SCALEXY, 0.75f).target(1, 1))
-                .end()
-                .setCallback(cb).setCallbackTriggers(TweenCallback.COMPLETE)
-                .start(tweenManager);
 
-        Timeline.createSequence()
-                .beginParallel()
-                .push(Tween.to(settings, SpriteAccessor.ROTATION, 0.75f).target(540))
-                .push(Tween.to(settings, SpriteAccessor.SCALEXY, 0.75f).target(1, 0))
-                .end()
-                .beginParallel()
-                .push(Tween.to(settings, SpriteAccessor.ROTATION, 0.75f).target(720))
-                .push(Tween.to(settings, SpriteAccessor.SCALEXY, 0.75f).target(1, 1))
-                .end()
-                .setCallback(cb).setCallbackTriggers(TweenCallback.COMPLETE)
-                .start(tweenManager);
+        if (animate == animatePlay) {
+
+            TweenCallback cb = new TweenCallback() {
+                @Override
+                public void onEvent(int type, BaseTween<?> source) {
+                    game.setScreen(new LevelSelect(game));
+                    dispose();
+                }
+            };
+
+            Timeline.createSequence()
+                    .beginParallel()
+                    .push(Tween.to(playButton, SpriteAccessor.ROTATION, 0.75f).target(540))
+                    .push(Tween.to(playButton, SpriteAccessor.SCALEXY, 0.75f).target(1, 0))
+                    .end()
+                    .beginParallel()
+                    .push(Tween.to(playButton, SpriteAccessor.ROTATION, 0.75f).target(720))
+                    .push(Tween.to(playButton, SpriteAccessor.SCALEXY, 0.75f).target(1, 1))
+                    .end()
+                    .setCallback(cb).setCallbackTriggers(TweenCallback.COMPLETE)
+                    .start(tweenManager);
+        }
+
+        if (animate == animateSettings) {
+            Timeline.createSequence()
+                    //.beginParallel()
+                    //.push(Tween.to(settings, SpriteAccessor.ROTATION, 0.75f).target(360))
+                    .push(Tween.to(settings, SpriteAccessor.SCALEXY, 0.25f).target(1, 0))
+                    .push(Tween.to(settings, SpriteAccessor.SCALEXY, 0.25f).target(1, 1))
+                            //.end()
+                    .start(tweenManager);
+        }
+
     }
 
     @Override
@@ -145,7 +150,10 @@ public class MainMenu implements Screen {
         if (Gdx.input.justTouched()) {
             touchPoint = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             if (playCircle.contains(touchPoint.x, touchPoint.y)) {
-                tweenTouch();
+                tweenTouch(animatePlay);
+            }
+            if (settingsCircle.contains(touchPoint.x, touchPoint.y)) {
+                tweenTouch(animateSettings);
             }
         }
     }
