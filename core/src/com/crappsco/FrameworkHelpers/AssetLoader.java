@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
  */
 public class AssetLoader {
 
-    public static Texture bg;
+    public static Texture bg, levelbutton;
     public static Texture faceup, facedown, play, settings;
     public static Texture loading;
 
@@ -26,12 +26,14 @@ public class AssetLoader {
 
 
         bg = new Texture("background.png");
+        levelbutton = new Texture(Gdx.files.internal("levelbutton.png"), true);
         faceup = new Texture(Gdx.files.internal("faceup.png"), true);
         facedown = new Texture(Gdx.files.internal("facedown.png"), true);
         loading = new Texture(Gdx.files.internal("loading.png"), true);
         play = new Texture(Gdx.files.internal("play.png"), true);
         settings = new Texture(Gdx.files.internal("settings.png"), true);
 
+        levelbutton.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
         faceup.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
         facedown.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
         loading.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);

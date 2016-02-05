@@ -1,6 +1,7 @@
 package com.crappsco.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -25,7 +26,7 @@ import aurelienribon.tweenengine.TweenManager;
 /**
  * Created by Ray on 2016-01-26.
  */
-public class MainMenu implements Screen {
+public class MainMenu implements Screen, InputProcessor {
     public Viewport viewport;
     public OrthographicCamera camera;
     public final float WIDTH = 1080;
@@ -46,6 +47,8 @@ public class MainMenu implements Screen {
     public MainMenu(Flip game) {
 
         this.game = game;
+        Gdx.input.setInputProcessor(this);
+        Gdx.input.setCatchBackKey(false);
 
         //Set Camera
         float aspectRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
@@ -141,39 +144,40 @@ public class MainMenu implements Screen {
 
     }
 
-    @Override
-    public void show() {
 
-    }
-
-    public void update(float delta) {
-        if (Gdx.input.justTouched()) {
-            touchPoint = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-            if (playCircle.contains(touchPoint.x, touchPoint.y)) {
-                tweenTouch(animatePlay);
-            }
-            if (settingsCircle.contains(touchPoint.x, touchPoint.y)) {
-                tweenTouch(animateSettings);
-            }
-        }
-    }
+// ================================= UPDATE ========================================================
 
     @Override
     public void render(float delta) {
         runTime += delta;
         tweenManager.update(delta);
-        update(delta);
 
-        //****************************************RENDER SECTION****************************************
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batcher.begin();
+
         playButton.draw(game.batcher);
         settings.draw(game.batcher);
         game.font.draw(game.batcher, "F L I P", 0, 1880);
-        game.batcher.end();
 
+        game.batcher.end();
     }
+
+// ================================== INPUT HANDLER ================================================
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        touchPoint = camera.unproject(new Vector3(screenX, screenY, 0));
+        if (playCircle.contains(touchPoint.x, touchPoint.y)) {
+            tweenTouch(animatePlay);
+        }
+        if (settingsCircle.contains(touchPoint.x, touchPoint.y)) {
+            tweenTouch(animateSettings);
+        }
+        return false;
+    }
+
+// ================================= Unused Methods ================================================
 
     @Override
     public void resize(int width, int height) {
@@ -181,6 +185,10 @@ public class MainMenu implements Screen {
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
     }
 
+    @Override
+    public void show() {
+
+    }
 
     @Override
     public void pause() {
@@ -202,4 +210,38 @@ public class MainMenu implements Screen {
 
     }
 
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
 }

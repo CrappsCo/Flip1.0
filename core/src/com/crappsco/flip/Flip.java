@@ -1,6 +1,7 @@
 package com.crappsco.flip;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.crappsco.FrameworkHelpers.AssetLoader;
@@ -31,4 +32,5 @@ public class Flip extends Game {
         AssetLoader.dispose();
         font.dispose();
     }
+
 }
